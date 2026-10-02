@@ -2,130 +2,83 @@ import { useMemo, useState } from "react";
 import { business, categories, catalogue } from "./data/catalog";
 import "./App.css";
 
+const types = ["Hampers", "Personalised Gifts", "Photo Gifts", "Home Decor", "Corporate"];
+
 export default function App() {
-  const [category, setCategory] = useState("All");
-  const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState(null);
+  const [menu, setMenu] = useState("All");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [product, setProduct] = useState(null);
   const [customOpen, setCustomOpen] = useState(false);
-  const [custom, setCustom] = useState({ occasion: "Birthday", budget: "", colours: "", message: "", requirements: "" });
+  const [cartCount, setCartCount] = useState(0);
 
-  const filtered = useMemo(() => catalogue.filter(item => {
-    const matchesCategory = category === "All" || item.category === category;
-    const text = `${item.name} ${item.category} ${item.short} ${item.includes.join(" ")}`.toLowerCase();
-    return matchesCategory && text.includes(query.toLowerCase().trim());
-  }), [category, query]);
+  const filtered = useMemo(() => catalogue.filter(p => {
+    const q = search.toLowerCase().trim();
+    return (menu === "All" || p.category === menu) &&
+      (!q || `${p.name} ${p.category} ${p.short} ${p.includes.join(" ")}`.toLowerCase().includes(q));
+  }), [menu, search]);
 
-  function orderProduct(product) {
-    const text = [
-      "Hello! I would like to order a gift hamper.",
-      "",
-      `Product: ${product.name}`,
-      `Price: ₹${product.price}`,
-      `Category: ${product.category}`,
-      "",
-      `Please let me know the next steps.`,
-    ].join("\n");
-    window.open(`https://wa.me/${business.whatsapp}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
-  }
+  const whatsapp = (text) => window.open(`https://wa.me/${business.whatsapp}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
 
-  function sendCustomRequest() {
-    const text = [
-      "Hello! I would like a customised gift hamper.",
-      "",
-      `Occasion: ${custom.occasion}`,
-      `Budget: ${custom.budget || "Not specified"}`,
-      `Preferred colours: ${custom.colours || "Not specified"}`,
-      `Message for recipient: ${custom.message || "Not specified"}`,
-      `Special requirements: ${custom.requirements || "Not specified"}`,
-    ].join("\n");
-    window.open(`https://wa.me/${business.whatsapp}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+  const order = (p) => whatsapp([`Hello! I would like to order:`, `Product: ${p.name}`, `Price: ₹${p.price}`, `Category: ${p.category}`, "", "Please share availability and delivery details."].join("\n"));
+
+  const custom = () => {
+    whatsapp(["Hello! I would like a customised gift.", "", "Occasion: ______", "Budget: ______", "Preferred colours/theme: ______", "Personalisation: ______", "Special requirements: ______"].join("\n"));
     setCustomOpen(false);
-  }
+  };
 
-  return (
-    <div className="site">
-      <header className="nav">
-        <a className="brand" href="#top">{business.name}</a>
-        <nav>
-          <a href="#catalogue">Catalogue</a>
-          <a href="#custom">Custom Hampers</a>
-          <button className="nav-button" onClick={() => setCustomOpen(true)}>Message us</button>
-        </nav>
-      </header>
+  return <div className="store">
+    <div className="announcement">✨ Thoughtful gifting, beautifully personalised <span>•</span> Easy WhatsApp ordering</div>
 
-      <main id="top">
-        <section className="hero">
-          <div className="hero-copy">
-            <span className="eyebrow">CURATED GIFTS · PERSONAL TOUCH</span>
-            <h1>Gifts that feel <em>made for them.</em></h1>
-            <p>{business.description}</p>
-            <div className="hero-actions">
-              <a className="primary" href="#catalogue">Explore hampers</a>
-              <button className="secondary" onClick={() => setCustomOpen(true)}>Create a custom gift</button>
-            </div>
-          </div>
-          <div className="hero-card">
-            <div className="hero-sparkle">✦</div>
-            <span>THIS SEASON</span>
-            <strong>Curated gifting<br />without the guesswork.</strong>
-            <p>Choose a ready-made hamper or tell us what you have in mind.</p>
-          </div>
-        </section>
+    <header className="header">
+      <a className="logo" href="#home">{business.name}<small>made with care</small></a>
+      <nav className="main-nav">
+        <a href="#home">Home</a>
+        <div className="nav-dropdown"><button>Shop <span>⌄</span></button><div className="dropdown"><strong>Shop by occasion</strong>{categories.filter(x=>x!=="All").map(x=><button key={x} onClick={()=>{setMenu(x);document.querySelector("#shop")?.scrollIntoView()}}>{x}</button>)}<strong>Shop by type</strong>{types.map(x=><button key={x}>{x}</button>)}</div></div>
+        <a href="#shop">Collections</a><a href="#about">Our story</a><a href="#custom">Custom gifts</a>
+      </nav>
+      <div className="header-actions">
+        <button aria-label="Search" onClick={()=>setSearchOpen(!searchOpen)}>⌕</button>
+        <button aria-label="Account">♙</button>
+        <button aria-label="Cart" onClick={()=>setCustomOpen(true)}>♡ <sup>{cartCount}</sup></button>
+      </div>
+    </header>
 
-        <section className="trust-strip">
-          <span>✓ Personalised requests</span><span>✓ Gift-ready packaging</span><span>✓ Easy WhatsApp ordering</span>
-        </section>
+    {searchOpen && <div className="search-bar"><input autoFocus value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search gifts, hampers, occasions..." /><button onClick={()=>{setSearch("");setSearchOpen(false)}}>×</button></div>}
 
-        <section className="catalogue" id="catalogue">
-          <div className="section-title">
-            <div><span className="eyebrow">OUR COLLECTION</span><h2>Shop ready-made hampers</h2></div>
-            <div className="search-wrap"><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search hampers..." aria-label="Search hampers" /></div>
-          </div>
-          <div className="categories">{categories.map(item => <button key={item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{item}</button>)}</div>
-          <div className="catalog-grid">
-            {filtered.map(product => (
-              <article className="catalog-card" key={product.id}>
-                <button className="product-image" onClick={() => setSelected(product)} aria-label={`View ${product.name}`}>
-                  <img src={product.image} alt={product.name} />
-                  <span>{product.category}</span>
-                </button>
-                <div className="catalog-info">
-                  <h3>{product.name}</h3>
-                  <p>{product.short}</p>
-                  <div className="card-bottom"><strong>₹{product.price.toLocaleString("en-IN")}</strong><button onClick={() => orderProduct(product)}>Order on WhatsApp</button></div>
-                </div>
-              </article>
-            ))}
-          </div>
-          {!filtered.length && <div className="empty-state">No hampers match your search. Try another category or ask us for a custom gift.</div>}
-        </section>
+    <main id="home">
+      <section className="hero">
+        <div className="hero-image hero-left"><img src="/products/boxes/medium-box.png" alt="Curated gift hamper" /></div>
+        <div className="hero-copy"><span className="eyebrow">CURATED · PERSONAL · MEMORABLE</span><h1>Make their moment<br/><i>extra special.</i></h1><p>Beautiful gifts and thoughtful hampers, curated for the people and occasions that matter most.</p><div><a className="button dark" href="#shop">Shop gifts</a><button className="button light" onClick={()=>setCustomOpen(true)}>Create something custom</button></div></div>
+        <div className="hero-image hero-right"><img src="/products/boxes/premium-box.png" alt="Premium gift box" /></div>
+      </section>
 
-        <section className="custom-banner" id="custom">
-          <div><span className="eyebrow">CAN'T FIND EXACTLY WHAT YOU WANT?</span><h2>Tell us what you’re imagining.</h2><p>Share your budget, occasion, colours and special requirements. We’ll suggest a hamper around it.</p></div>
-          <button className="primary" onClick={() => setCustomOpen(true)}>Request a custom hamper →</button>
-        </section>
-      </main>
+      <section className="quick-links"><a href="#shop">Birthday <span>→</span></a><a href="#shop">Anniversary <span>→</span></a><a href="#shop">Wedding <span>→</span></a><a href="#shop">Festive <span>→</span></a><a href="#custom">Custom <span>→</span></a></section>
 
-      <footer><span>{business.name}</span><span>{business.tagline}</span></footer>
+      <section className="collection-section" id="shop">
+        <div className="section-head"><div><span className="eyebrow">SHOP THE COLLECTION</span><h2>Gifts for every little story</h2></div><a href="#shop">View all →</a></div>
+        <div className="filter-row">{categories.map(c=><button className={menu===c?"active":""} key={c} onClick={()=>setMenu(c)}>{c}</button>)}</div>
+        <div className="product-grid">{filtered.map(p=><article className="product" key={p.id}>
+          <button className="product-photo" onClick={()=>setProduct(p)}><img src={p.image} alt={p.name}/><span className="heart">♡</span>{p.category==="Festive"&&<b>NEW</b>}</button>
+          <div className="product-copy"><span>{p.category}</span><h3>{p.name}</h3><p>₹{p.price.toLocaleString("en-IN")}</p><button onClick={()=>{setCartCount(x=>x+1);order(p)}}>Order on WhatsApp</button></div>
+        </article>)}</div>
+        {!filtered.length&&<div className="empty">No gifts found. <button onClick={()=>setCustomOpen(true)}>Ask us to create one →</button></div>}
+      </section>
 
-      {selected && <div className="modal-backdrop" onMouseDown={() => setSelected(null)}><div className="modal product-modal" onMouseDown={e => e.stopPropagation()}>
-        <button className="close" onClick={() => setSelected(null)}>×</button>
-        <img src={selected.image} alt={selected.name} />
-        <div><span className="eyebrow">{selected.category}</span><h2>{selected.name}</h2><p>{selected.short}</p><h3>₹{selected.price.toLocaleString("en-IN")}</h3><h4>What's included</h4><ul>{selected.includes.map(x => <li key={x}>{x}</li>)}</ul><button className="primary full" onClick={() => orderProduct(selected)}>Order this hamper on WhatsApp</button><button className="text-button" onClick={() => { setSelected(null); setCustomOpen(true); }}>Need changes? Request customisation</button></div>
-      </div></div>}
+      <section className="story" id="about">
+        <div className="story-art"><div>✦</div><span>MADE FOR<br/>YOUR STORY</span></div>
+        <div><span className="eyebrow">A LITTLE ABOUT US</span><h2>Not just a gift.<br/><i>A memory in a box.</i></h2><p>{business.description} Every order can be adapted to your recipient, your colours and your budget.</p><button className="button dark" onClick={()=>setCustomOpen(true)}>Tell us your idea</button></div>
+      </section>
 
-      {customOpen && <div className="modal-backdrop" onMouseDown={() => setCustomOpen(false)}><div className="modal custom-modal" onMouseDown={e => e.stopPropagation()}>
-        <button className="close" onClick={() => setCustomOpen(false)}>×</button>
-        <span className="eyebrow">CUSTOM HAMPER REQUEST</span><h2>Let's make it yours.</h2><p>Tell us the basics and we’ll continue the conversation on WhatsApp.</p>
-        <div className="form-grid">
-          <label>Occasion<select value={custom.occasion} onChange={e => setCustom({...custom, occasion:e.target.value})}>{["Birthday","Anniversary","Wedding","Festive","Corporate","Other"].map(x => <option key={x}>{x}</option>)}</select></label>
-          <label>Budget<input value={custom.budget} onChange={e => setCustom({...custom,budget:e.target.value})} placeholder="e.g. ₹1500" /></label>
-          <label>Preferred colours<input value={custom.colours} onChange={e => setCustom({...custom,colours:e.target.value})} placeholder="e.g. Pink & gold" /></label>
-          <label>Recipient message<input value={custom.message} onChange={e => setCustom({...custom,message:e.target.value})} placeholder="e.g. Happy birthday!" /></label>
-          <label className="wide">Special requirements<textarea value={custom.requirements} onChange={e => setCustom({...custom,requirements:e.target.value})} placeholder="Items to include, items to avoid, theme, delivery date, etc." /></label>
-        </div>
-        <button className="primary full" onClick={sendCustomRequest}>Send request on WhatsApp →</button>
-      </div></div>}
-    </div>
-  );
+      <section className="custom" id="custom"><div><span className="eyebrow">HAVE SOMETHING ELSE IN MIND?</span><h2>Tell us the story.<br/><i>We'll craft the gift.</i></h2><p>Share your occasion, budget, theme or even a reference photo. We'll take it from there.</p></div><button className="button cream" onClick={()=>setCustomOpen(true)}>Request a custom gift →</button></section>
+
+      <section className="reviews"><span className="eyebrow">LOVE NOTES</span><h2>Made to make someone smile.</h2><div className="review-grid"><blockquote>“The hamper looked even better than I imagined. Such beautiful finishing.”<small>— Happy customer</small></blockquote><blockquote>“I gave them my budget and theme and they did the rest. Loved it.”<small>— Happy customer</small></blockquote><blockquote>“The personalised touch made the gift feel truly special.”<small>— Happy customer</small></blockquote></div></section>
+    </main>
+
+    <footer><div><a className="logo" href="#home">{business.name}<small>made with care</small></a><p>{business.tagline}</p></div><div><strong>Shop</strong><a href="#shop">All gifts</a><a href="#shop">By occasion</a><a href="#custom">Custom gifts</a></div><div><strong>Help</strong><a href="#custom">Contact us</a><a href="#custom">WhatsApp</a><a href="#about">Our story</a></div><div><strong>Follow</strong><a href={business.instagram || "#"}>Instagram</a><a href="#home">Pinterest</a></div></footer>
+
+    {product&&<div className="overlay" onMouseDown={()=>setProduct(null)}><div className="product-modal" onMouseDown={e=>e.stopPropagation()}><button className="close" onClick={()=>setProduct(null)}>×</button><img src={product.image} alt={product.name}/><div><span className="eyebrow">{product.category}</span><h2>{product.name}</h2><p>{product.short}</p><strong className="modal-price">₹{product.price.toLocaleString("en-IN")}</strong><h4>Includes</h4><ul>{product.includes.map(x=><li key={x}>{x}</li>)}</ul><button className="button dark full" onClick={()=>order(product)}>Order this gift →</button><button className="text-link" onClick={()=>{setProduct(null);setCustomOpen(true)}}>Need changes? Request customisation</button></div></div></div>}
+
+    {customOpen&&<div className="overlay" onMouseDown={()=>setCustomOpen(false)}><div className="custom-modal" onMouseDown={e=>e.stopPropagation()}><button className="close" onClick={()=>setCustomOpen(false)}>×</button><span className="eyebrow">CUSTOM GIFTING</span><h2>Let's make it personal.</h2><p>We'll collect the details on WhatsApp and help you build the right gift.</p><div className="custom-form"><input placeholder="Occasion"/><input placeholder="Budget (e.g. ₹1500)"/><input placeholder="Colours / theme"/><input placeholder="Recipient / relationship"/><textarea placeholder="What would you like included? Any special message or requirements?"/></div><button className="button dark full" onClick={custom}>Continue on WhatsApp →</button></div></div>}
+  </div>;
 }
