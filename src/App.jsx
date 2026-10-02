@@ -20,7 +20,7 @@ export default function App() {
 
   const whatsapp = (text) => window.open(`https://wa.me/${business.whatsapp}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
 
-  const order = (p) => whatsapp([`Hello! I would like to order:`, `Product: ${p.name}`, `Price: ₹${p.price}`, `Category: ${p.category}`, "", "Please share availability and delivery details."].join("\n"));
+  const order = (p) => whatsapp(["Hello! I would like to order:", `Product: ${p.name}`, `Price: ₹${p.price}`, `Category: ${p.category}`, "", "Please share availability and delivery details."].join("\n"));
 
   const custom = () => {
     whatsapp(["Hello! I would like a customised gift.", "", "Occasion: ______", "Budget: ______", "Preferred colours/theme: ______", "Personalisation: ______", "Special requirements: ______"].join("\n"));
@@ -48,9 +48,13 @@ export default function App() {
 
     <main id="home">
       <section className="hero">
-        <div className="hero-image hero-left"><img src="/products/boxes/medium-box.png" alt="Curated gift hamper" /></div>
-        <div className="hero-copy"><span className="eyebrow">CURATED · PERSONAL · MEMORABLE</span><h1>Make their moment<br/><i>extra special.</i></h1><p>Beautiful gifts and thoughtful hampers, curated for the people and occasions that matter most.</p><div><a className="button dark" href="#shop">Shop gifts</a><button className="button light" onClick={()=>setCustomOpen(true)}>Create something custom</button></div></div>
-        <div className="hero-image hero-right"><img src="/products/boxes/premium-box.png" alt="Premium gift box" /></div>
+        <div className="hero-copy"><span className="eyebrow">CURATED · PERSONAL · MEMORABLE</span><h1>Make their moment<br/><i>extra special.</i></h1><p>Beautiful gifts and thoughtful hampers, curated for the people and occasions that matter most.</p><div><a className="button dark" href="#shop">Shop gifts</a><button className="button light" onClick={()=>setCustomOpen(true)}>Create something custom</button></div><div className="trust-strip"><span>✓ Curated with care</span><span>✓ Custom gifting</span><span>✓ WhatsApp ordering</span></div></div>
+        <div className="hero-showcase">
+          <div className="hero-main-photo"><img src="/images/main-image.png" alt="Main gift hamper" /></div>
+          <div className="hero-float hero-float-one"><img src="/images/left-image.png" alt="Featured gift" /></div>
+          <div className="hero-float hero-float-two"><img src="/images/right-image.png" alt="Featured gift" /></div>
+          <span className="hero-badge">FEATURED<br/><strong>GIFTING</strong></span>
+        </div>
       </section>
 
       <section className="quick-links"><button onClick={()=>setMenu("Birthday")}>Birthday <span>→</span></button><button onClick={()=>setMenu("Anniversary")}>Anniversary <span>→</span></button><button onClick={()=>setMenu("Wedding")}>Wedding <span>→</span></button><button onClick={()=>setMenu("Festive")}>Diwali <span>→</span></button><button onClick={()=>setCustomOpen(true)}>Custom <span>→</span></button></section>
