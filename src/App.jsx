@@ -65,9 +65,9 @@ export default function App() {
       <section className="hero">
         <div className="hero-copy"><span className="eyebrow">CURATED · PERSONAL · MEMORABLE</span><h1>Make their moment<br/><i>extra special.</i></h1><p>Beautiful gifts and thoughtful hampers, curated for the people and occasions that matter most.</p><div><a className="button dark" href="#shop">Shop gifts</a><button className="button light" onClick={()=>setCustomOpen(true)}>Create something custom</button></div><div className="trust-strip"><span>✓ Curated with care</span><span>✓ Custom gifting</span><span>✓ WhatsApp ordering</span></div></div>
         <div className="hero-showcase">
-          <div className="hero-main-photo"><ImageAsset src="/images/main-image.png" alt="Main gift hamper" /></div>
-          <div className="hero-float hero-float-one"><ImageAsset src="/images/left-image.png" alt="Featured gift" /></div>
-          <div className="hero-float hero-float-two"><ImageAsset src="/images/right-image.png" alt="Featured gift" /></div>
+          <div className="hero-main-photo"><ImageAsset src="/images/main-image.webp" alt="Main gift hamper" /></div>
+          <div className="hero-float hero-float-one"><ImageAsset src="/images/left-image.jpg" alt="Featured gift" /></div>
+          <div className="hero-float hero-float-two"><ImageAsset src="/images/right-image.webp" alt="Featured gift" /></div>
           <span className="hero-badge">FEATURED<br/><strong>GIFTING</strong></span>
         </div>
       </section>
