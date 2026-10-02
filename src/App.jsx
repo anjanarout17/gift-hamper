@@ -116,7 +116,7 @@ export default function App() {
 
       {customOpen && <div className="modal-backdrop" onMouseDown={() => setCustomOpen(false)}><div className="modal custom-modal" onMouseDown={e => e.stopPropagation()}>
         <button className="close" onClick={() => setCustomOpen(false)}>×</button>
-        <span className="eyebrow">CUSTOM HAMPEr REQUEST</span><h2>Let's make it yours.</h2><p>Tell us the basics and we’ll continue the conversation on WhatsApp.</p>
+        <span className="eyebrow">CUSTOM HAMPER REQUEST</span><h2>Let's make it yours.</h2><p>Tell us the basics and we’ll continue the conversation on WhatsApp.</p>
         <div className="form-grid">
           <label>Occasion<select value={custom.occasion} onChange={e => setCustom({...custom, occasion:e.target.value})}>{["Birthday","Anniversary","Wedding","Festive","Corporate","Other"].map(x => <option key={x}>{x}</option>)}</select></label>
           <label>Budget<input value={custom.budget} onChange={e => setCustom({...custom,budget:e.target.value})} placeholder="e.g. ₹1500" /></label>
