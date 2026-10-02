@@ -28,7 +28,7 @@ export default function App() {
   };
 
   return <div className="store">
-    <div className="announcement">🪔 <strong>Diwali Collection is Live Now!</strong> <span>•</span> Thoughtful gifting, beautifully personalised <span>•</span> Easy WhatsApp ordering</div>
+    <button className="announcement" onClick={()=>{setMenu("Festive");document.querySelector("#shop")?.scrollIntoView({behavior:"smooth"})}}>🪔 <strong>DIWALI COLLECTION IS LIVE NOW</strong> <span>•</span> Shop festive gifting <span>•</span> Easy WhatsApp ordering</button>
 
     <header className="header">
       <a className="logo" href="#home">{business.name}<small>made with care</small></a>
@@ -53,10 +53,10 @@ export default function App() {
         <div className="hero-image hero-right"><img src="/products/boxes/premium-box.png" alt="Premium gift box" /></div>
       </section>
 
-      <section className="quick-links"><a href="#shop">Birthday <span>→</span></a><a href="#shop">Anniversary <span>→</span></a><a href="#shop">Wedding <span>→</span></a><a href="#shop">Festive <span>→</span></a><a href="#custom">Custom <span>→</span></a></section>
+      <section className="quick-links"><button onClick={()=>setMenu("Birthday")}>Birthday <span>→</span></button><button onClick={()=>setMenu("Anniversary")}>Anniversary <span>→</span></button><button onClick={()=>setMenu("Wedding")}>Wedding <span>→</span></button><button onClick={()=>setMenu("Festive")}>Diwali <span>→</span></button><button onClick={()=>setCustomOpen(true)}>Custom <span>→</span></button></section>
 
       <section className="collection-section" id="shop">
-        <div className="section-head"><div><span className="eyebrow">SHOP THE COLLECTION</span><h2>Gifts for every little story</h2></div><a href="#shop">View all →</a></div>
+        <div className="section-head"><div><span className="eyebrow">SHOP THE COLLECTION</span><h2>Gifts for every little story</h2><p className="section-subtitle">Beautifully curated hampers, ready to make someone smile.</p></div><button onClick={()=>setMenu("All")}>View all →</button></div>
         <div className="filter-row">{categories.map(c=><button className={menu===c?"active":""} key={c} onClick={()=>setMenu(c)}>{c}</button>)}</div>
         <div className="product-grid">{filtered.map(p=><article className="product" key={p.id}>
           <button className="product-photo" onClick={()=>setProduct(p)}><img src={p.image} alt={p.name}/><span className="heart">♡</span>{p.category==="Festive"&&<b>NEW</b>}</button>
