@@ -2,6 +2,21 @@ import { useMemo, useState } from "react";
 import { business, categories, catalogue } from "./data/catalog";
 import "./App.css";
 
+function ImageAsset({ src, alt, ...props }) {
+  const [currentSrc, setCurrentSrc] = useState(src);
+  const extensions = [".png", ".jpg", ".jpeg", ".webp", ".avif"];
+
+  const handleError = () => {
+    const match = currentSrc.match(/^(.*)\.(png|jpg|jpeg|webp|avif)$/i);
+    if (!match) return;
+    const currentIndex = extensions.indexOf("." + match[2].toLowerCase());
+    const nextExtension = extensions[currentIndex + 1];
+    if (nextExtension) setCurrentSrc(match[1] + nextExtension);
+  };
+
+  return <img src={currentSrc} alt={alt} onError={handleError} {...props} />;
+}
+
 const types = ["Hampers", "Personalised Gifts", "Photo Gifts", "Home Decor", "Corporate"];
 
 export default function App() {
@@ -50,9 +65,9 @@ export default function App() {
       <section className="hero">
         <div className="hero-copy"><span className="eyebrow">CURATED · PERSONAL · MEMORABLE</span><h1>Make their moment<br/><i>extra special.</i></h1><p>Beautiful gifts and thoughtful hampers, curated for the people and occasions that matter most.</p><div><a className="button dark" href="#shop">Shop gifts</a><button className="button light" onClick={()=>setCustomOpen(true)}>Create something custom</button></div><div className="trust-strip"><span>✓ Curated with care</span><span>✓ Custom gifting</span><span>✓ WhatsApp ordering</span></div></div>
         <div className="hero-showcase">
-          <div className="hero-main-photo"><img src="/images/main-image.png" alt="Main gift hamper" /></div>
-          <div className="hero-float hero-float-one"><img src="/images/left-image.png" alt="Featured gift" /></div>
-          <div className="hero-float hero-float-two"><img src="/images/right-image.png" alt="Featured gift" /></div>
+          <div className="hero-main-photo"><ImageAsset src="/images/main-image.png" alt="Main gift hamper" /></div>
+          <div className="hero-float hero-float-one"><ImageAsset src="/images/left-image.png" alt="Featured gift" /></div>
+          <div className="hero-float hero-float-two"><ImageAsset src="/images/right-image.png" alt="Featured gift" /></div>
           <span className="hero-badge">FEATURED<br/><strong>GIFTING</strong></span>
         </div>
       </section>
