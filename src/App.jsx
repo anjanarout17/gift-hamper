@@ -28,7 +28,7 @@ export default function App() {
   };
 
   return <div className="store">
-    <div className="announcement">✨ Thoughtful gifting, beautifully personalised <span>•</span> Easy WhatsApp ordering</div>
+    <div className="announcement">🪔 <strong>Diwali Collection is Live Now!</strong> <span>•</span> Thoughtful gifting, beautifully personalised <span>•</span> Easy WhatsApp ordering</div>
 
     <header className="header">
       <a className="logo" href="#home">{business.name}<small>made with care</small></a>
